@@ -1,10 +1,10 @@
 
-def topic_top()
+def topic_bot()
 	page.driver.evaluate_script <<-EOS
 		function() {
 		var ele  = document.getElementById('topic');
 		var rect = ele.getBoundingClientRect();
-		return rect.top;
+		return rect.bottom;
 		}();
 	EOS
 end
@@ -19,7 +19,85 @@ def image_top()
 	EOS
 end
 
+def image_bot()
+	page.driver.evaluate_script <<-EOS
+  	function() {
+    	var ele  = document.getElementById('main_image');
+    	var rect = ele.getBoundingClientRect();
+    	return rect.bottom;
+  	}();
+	EOS
+end
 
+def input_top()
+	page.driver.evaluate_script <<-EOS
+  	function() {
+    	var ele  = document.getElementById('text_input');
+    	var rect = ele.getBoundingClientRect();
+    	return rect.top;
+  	}();
+	EOS
+end
+
+def input_right()
+	page.driver.evaluate_script <<-EOS
+  	function() {
+    	var ele  = document.getElementById('text_input');
+    	var rect = ele.getBoundingClientRect();
+    	return rect.right;
+  	}();
+	EOS
+end
+
+def input_bot()
+	page.driver.evaluate_script <<-EOS
+  	function() {
+    	var ele  = document.getElementById('text_input');
+    	var rect = ele.getBoundingClientRect();
+    	return rect.bottom;
+  	}();
+	EOS
+end
+
+def build_top()
+	page.driver.evaluate_script <<-EOS
+  	function() {
+    	var ele  = document.getElementById('build');
+    	var rect = ele.getBoundingClientRect();
+    	return rect.top;
+  	}();
+	EOS
+end
+
+def build_left()
+	page.driver.evaluate_script <<-EOS
+  	function() {
+    	var ele  = document.getElementById('build');
+    	var rect = ele.getBoundingClientRect();
+    	return rect.left;
+  	}();
+	EOS
+end
+
+def build_bot()
+	page.driver.evaluate_script <<-EOS
+  	function() {
+    	var ele  = document.getElementById('build');
+    	var rect = ele.getBoundingClientRect();
+    	return rect.bottom;
+  	}();
+	EOS
+end
+
+def history_top()
+	page.driver.evaluate_script <<-EOS
+  	function() {
+    	var ele  = document.getElementById('history');
+    	var rect = ele.getBoundingClientRect();
+    	return rect.top;
+  	}();
+  	EOS
+end
 
 
 Given(/^I am on the Collage page$/) do
@@ -30,66 +108,67 @@ Then(/^I should see the search box with placeholder text "([^"]*)"$/) do |placeh
   expect(find_field('text_input')['placeholder']).to eq placeholdertext
 end
 
-And(/^I should see the title at the top of the page$/) do
-	posTopic = topic_top()
-
-	posImage = page.driver.evaluate_script <<-EOS
-  	function() {
-    	var ele  = document.getElementById('main_image');
-    	var rect = ele.getBoundingClientRect();
-    	return rect.top;
-  	}();
-	EOS
-
-	# NEED TO CHECK FOR BUILD ANOTHER BUTTON
-
-	posExport = page.driver.evaluate_script <<-EOS
-  	function() {
-    	var ele  = document.getElementById('main_image');
-    	var rect = ele.getBoundingClientRect();
-    	return rect.top;
-  	}();
-	EOS
-
-	posHistory = page.driver.evaluate_script <<-EOS
-  	function() {
-    	var ele  = document.getElementById('main_image');
-    	var rect = ele.getBoundingClientRect();
-    	return rect.top;
-  	}();
-	EOS
-
-	expect(posTopic).to be < posImage
-	expect(posTopic).to be < posExport
-	expect(posTopic).to be < posHistory
-end
-
-And(/^And I should see the collage underneath the title$/) do
-	posTopic = topic_top()
+And(/^I should see the Title at the top of the page$/) do
+	# Title is top of the page if the bottom of the title is above every other element
+	posTopic = topic_bot() 
 
 	posImage = image_top()
 
 	# NEED TO CHECK FOR BUILD ANOTHER BUTTON
 
-	posExport = page.driver.evaluate_script <<-EOS
-  	function() {
-    	var ele  = document.getElementById('main_image');
-    	var rect = ele.getBoundingClientRect();
-    	return rect.top;
-  	}();
-	EOS
+	posInput = input_top()
+	posBuild = build_top()
 
-	posHistory = page.driver.evaluate_script <<-EOS
-  	function() {
-    	var ele  = document.getElementById('main_image');
-    	var rect = ele.getBoundingClientRect();
-    	return rect.top;
-  	}();
-	EOS
+	posHistory = history_top()
 
 	expect(posTopic).to be < posImage
-	expect(posTopic).to be < posExport
+	expect(posTopic).to be < posInput
+	expect(posTopic).to be < posBuild
 	expect(posTopic).to be < posHistory
+end
+
+And(/^I should see the Collage underneath the Title$/) do
+	posTopic = topic_bot()
+
+	posImage = image_top()
+
+	# NEED TO CHECK FOR BUILD ANOTHER BUTTON
+
+	# posInput = input_top()
+
+	# posHistory = history_top()
+
+	expect(posImage).to be > posTopic
+	# expect(posImage).to be < posInput
+	# expect(posImage).to be < posHistory
+end
+
+And(/^I should see the Build Another Collage button underneath the collage$/) do
+	posImage = image_bot()
+	posBuild = build_top()
+
+	expect(posBuild).to be > posImage
+end
+
+And(/^I should see the Input Box to the left of the Build Another Collage button$/) do
+	posInput = input_right()
+	posBuild = build_left()
+
+	expect(posInput).to be < posBuild
+end
+
+And(/^I should see the Previous Collage Picker at the bottom of the page$/) do
+	posHistory = history_top()
+	posTopic = topic_bot()
+	posImage = image_bot()
+	posBuild = build_bot()
+	posInput = input_bot()
+
+	expect(posHistory).to be > posTopic
+	expect(posHistory).to be > posImage
+	expect(posHistory).to be > posBuild
+	expect(posHistory).to be > posInput
+
 end
 
 When(/^I enter "([^"]*)" in the search box$/) do |searchArg|
