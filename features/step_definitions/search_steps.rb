@@ -19,7 +19,25 @@ def image_top()
 	EOS
 end
 
+def input_top()
+	page.driver.evaluate_script <<-EOS
+  	function() {
+    	var ele  = document.getElementById('input');
+    	var rect = ele.getBoundingClientRect();
+    	return rect.top;
+  	}();
+	EOS
+end
 
+def history_top()
+	page.driver.evaluate_script <<-EOS
+  	function() {
+    	var ele  = document.getElementById('history');
+    	var rect = ele.getBoundingClientRect();
+    	return rect.top;
+  	}();
+  	EOS
+end
 
 
 Given(/^I am on the Collage page$/) do
@@ -33,63 +51,33 @@ end
 And(/^I should see the title at the top of the page$/) do
 	posTopic = topic_top()
 
-	posImage = page.driver.evaluate_script <<-EOS
-  	function() {
-    	var ele  = document.getElementById('main_image');
-    	var rect = ele.getBoundingClientRect();
-    	return rect.top;
-  	}();
-	EOS
+	posImage = image_top()
 
 	# NEED TO CHECK FOR BUILD ANOTHER BUTTON
 
-	posExport = page.driver.evaluate_script <<-EOS
-  	function() {
-    	var ele  = document.getElementById('main_image');
-    	var rect = ele.getBoundingClientRect();
-    	return rect.top;
-  	}();
-	EOS
+	posInput = input_top()
 
-	posHistory = page.driver.evaluate_script <<-EOS
-  	function() {
-    	var ele  = document.getElementById('main_image');
-    	var rect = ele.getBoundingClientRect();
-    	return rect.top;
-  	}();
-	EOS
+	posHistory = history_top()
 
 	expect(posTopic).to be < posImage
-	expect(posTopic).to be < posExport
+	expect(posTopic).to be < posInput
 	expect(posTopic).to be < posHistory
 end
 
-And(/^And I should see the collage underneath the title$/) do
+And(/^I should see the collage underneath the title$/) do
 	posTopic = topic_top()
 
 	posImage = image_top()
 
 	# NEED TO CHECK FOR BUILD ANOTHER BUTTON
 
-	posExport = page.driver.evaluate_script <<-EOS
-  	function() {
-    	var ele  = document.getElementById('main_image');
-    	var rect = ele.getBoundingClientRect();
-    	return rect.top;
-  	}();
-	EOS
+	posInput = input_top()
 
-	posHistory = page.driver.evaluate_script <<-EOS
-  	function() {
-    	var ele  = document.getElementById('main_image');
-    	var rect = ele.getBoundingClientRect();
-    	return rect.top;
-  	}();
-	EOS
+	posHistory = history_top()
 
-	expect(posTopic).to be < posImage
-	expect(posTopic).to be < posExport
-	expect(posTopic).to be < posHistory
+	expect(posImage).to be > posTopic
+	expect(posImage).to be < posInput
+	expect(posImage).to be < posHistory
 end
 
 When(/^I enter "([^"]*)" in the search box$/) do |searchArg|
