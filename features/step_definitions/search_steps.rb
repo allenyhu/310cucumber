@@ -80,6 +80,13 @@ And(/^I should see the collage underneath the title$/) do
 	expect(posImage).to be < posHistory
 end
 
+And(/^I should see the build another button underneath the collage$/) do
+	posImage = image_top()
+	posInput = input_top()
+
+	expect(posInput).to be > posImage
+end
+
 When(/^I enter "([^"]*)" in the search box$/) do |searchArg|
   fill_in('text_input', :with => searchArg)
 end
