@@ -48,6 +48,15 @@ def image_width()
 	EOS
 end
 
+def image_height()
+	page.driver.evaluate_script <<-EOS
+  	function() {
+    	var ele  = document.getElementById('main_image');
+    	return ele.height;
+  	}();
+	EOS
+end
+
 def image_bot()
 	page.driver.evaluate_script <<-EOS
   	function() {
@@ -208,13 +217,28 @@ end
 
 And(/^I should see the Collage meets the width requirements$/) do
 	imageWidth = image_width()
-	p imageWidth
 	windowWidth = page.driver.browser.manage.window.size[0]
-	p windowWidth
 
-	expect(imageWidth). to be > 800
+	maxWidth = (windowWidth.to_f * 0.7)
+
+	expect(imageWidth). to be >= 800
 	expect(imageWidth). to be >= (windowWidth.to_f * 0.4)
-	expect(imageWidth). to be <= (windowWidth.to_f * 0.7)
+	if maxWidth > 800
+		expect(imageWidth). to be <= maxWidth
+	end
+end
+
+And(/^I should see the Collage meets the height requirements$/) do
+	imageHeight = image_height()
+	windowHeight = page.driver.browser.manage.window.size[1]
+
+	maxHeight = windowHeight.to_f * 0.5
+
+	expect(imageHeight). to be >= 600
+	expect(imageHeight). to be >= (windowHeight.to_f * 0.35)
+	if  maxHeight > 600
+		expect(imageHeight). to be <= maxHeight
+	end
 end
 
 And(/^I should see the Build Another Collage button underneath the collage$/) do

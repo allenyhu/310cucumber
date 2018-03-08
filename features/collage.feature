@@ -8,6 +8,7 @@ Background:
 	And I should see the Collage underneath the Title
 	And I should see the Collage centered in the page
 	And I should see the Collage meets the width requirements
+	And I should see the Collage meets the height requirements
 	And I should see the Build Another Collage button underneath the collage
 	And I should see the Build Another Collage button right of center
 	And I should see the Input Box to the left of the Build Another Collage button
