@@ -204,6 +204,15 @@ And(/^I should see the Build Another Collage button underneath the collage$/) do
 	expect(posBuild).to be > posImage
 end
 
+And(/^I should see the Build Another Collage button right of center$/) do
+	buildLeft = build_left()
+
+	width = page.driver.browser.manage.window.size[0]
+
+	expect(buildLeft).to be > width/2
+end
+
+
 And(/^I should see the Input Box to the left of the Build Another Collage button$/) do
 	posInput = input_right()
 	posBuild = build_left()
