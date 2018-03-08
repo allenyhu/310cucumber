@@ -19,6 +19,26 @@ def image_top()
 	EOS
 end
 
+def image_left()
+	page.driver.evaluate_script <<-EOS
+  	function() {
+    	var ele  = document.getElementById('main_image');
+    	var rect = ele.getBoundingClientRect();
+    	return rect.left;
+  	}();
+	EOS
+end
+
+def image_right()
+	page.driver.evaluate_script <<-EOS
+  	function() {
+    	var ele  = document.getElementById('main_image');
+    	var rect = ele.getBoundingClientRect();
+    	return rect.right;
+  	}();
+	EOS
+end
+
 def image_bot()
 	page.driver.evaluate_script <<-EOS
   	function() {
@@ -89,6 +109,16 @@ def build_bot()
 	EOS
 end
 
+def export_top()
+	page.driver.evaluate_script <<-EOS
+  	function() {
+    	var ele  = document.getElementById('export');
+    	var rect = ele.getBoundingClientRect();
+    	return rect.top;
+  	}();
+	EOS
+end
+
 def history_top()
 	page.driver.evaluate_script <<-EOS
   	function() {
@@ -111,19 +141,20 @@ end
 And(/^I should see the Title at the top of the page$/) do
 	# Title is top of the page if the bottom of the title is above every other element
 	posTopic = topic_bot() 
-
+	
 	posImage = image_top()
-
-	# NEED TO CHECK FOR BUILD ANOTHER BUTTON
-
+	
 	posInput = input_top()
 	posBuild = build_top()
+	
+	posExport = export_top()
 
 	posHistory = history_top()
 
 	expect(posTopic).to be < posImage
 	expect(posTopic).to be < posInput
 	expect(posTopic).to be < posBuild
+	expect(posTopic).to be < posExport
 	expect(posTopic).to be < posHistory
 end
 
@@ -141,6 +172,19 @@ And(/^I should see the Collage underneath the Title$/) do
 	expect(posImage).to be > posTopic
 	# expect(posImage).to be < posInput
 	# expect(posImage).to be < posHistory
+end
+
+And (/^I should see the Collage centered in the page$/) do
+	imageLeft = image_left()
+	imageRight = image_right()
+
+	width = page.driver.browser.manage.window.size[0]
+
+	# distance from collage to the right edge of window
+	distRight = width - imageRight
+
+	# if collage centered than the distance from left (imageLeft) == distRight
+	expect(imageLeft).to eq distRight
 end
 
 And(/^I should see the Build Another Collage button underneath the collage$/) do
