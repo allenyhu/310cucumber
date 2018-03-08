@@ -39,6 +39,15 @@ def image_right()
 	EOS
 end
 
+def image_width()
+	page.driver.evaluate_script <<-EOS
+  	function() {
+    	var ele  = document.getElementById('main_image');
+    	return ele.width;
+  	}();
+	EOS
+end
+
 def image_bot()
 	page.driver.evaluate_script <<-EOS
   	function() {
@@ -184,17 +193,28 @@ And(/^I should see the Collage underneath the Title$/) do
 	# expect(posImage).to be < posHistory
 end
 
-And (/^I should see the Collage centered in the page$/) do
+And(/^I should see the Collage centered in the page$/) do
 	imageLeft = image_left()
 	imageRight = image_right()
 
-	width = page.driver.browser.manage.window.size[0]
+	windowWidth = page.driver.browser.manage.window.size[0]
 
 	# distance from collage to the right edge of window
-	distRight = width - imageRight
+	distRight = windowWidth - imageRight
 
 	# if collage centered than the distance from left (imageLeft) == distRight
 	expect(imageLeft).to eq distRight
+end
+
+And(/^I should see the Collage meets the width requirements$/) do
+	imageWidth = image_width()
+	p imageWidth
+	windowWidth = page.driver.browser.manage.window.size[0]
+	p windowWidth
+
+	expect(imageWidth). to be > 800
+	expect(imageWidth). to be >= (windowWidth.to_f * 0.4)
+	expect(imageWidth). to be <= (windowWidth.to_f * 0.7)
 end
 
 And(/^I should see the Build Another Collage button underneath the collage$/) do
