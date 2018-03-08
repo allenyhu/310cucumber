@@ -119,6 +119,16 @@ def export_top()
 	EOS
 end
 
+def export_bot()
+	page.driver.evaluate_script <<-EOS
+  	function() {
+    	var ele  = document.getElementById('export');
+    	var rect = ele.getBoundingClientRect();
+    	return rect.bottom;
+  	}();
+	EOS
+end
+
 def history_top()
 	page.driver.evaluate_script <<-EOS
   	function() {
@@ -203,15 +213,21 @@ end
 
 And(/^I should see the Previous Collage Picker at the bottom of the page$/) do
 	posHistory = history_top()
+
 	posTopic = topic_bot()
+
 	posImage = image_bot()
+
 	posBuild = build_bot()
 	posInput = input_bot()
+
+	posExport = export_bot()
 
 	expect(posHistory).to be > posTopic
 	expect(posHistory).to be > posImage
 	expect(posHistory).to be > posBuild
 	expect(posHistory).to be > posInput
+	expect(posHistory).to be > posExport
 
 end
 
