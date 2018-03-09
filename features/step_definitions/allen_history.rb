@@ -74,3 +74,18 @@ And(/^I should see the Previous Collage Picker displays all collages in a single
 	expect(bots.same_values?).to be true
 end
 
+When(/^I click on a thumbnail$/) do 
+	thumbnails = get_history()
+	page.find_by_id(thumbnails[1]['id']).click()
+end
+
+Then(/^I should see the full size original in the main collage space with collage title$/) do
+	thumbnails = get_history()
+
+	src = thumbnails[1]['src']
+	topic = thumbnails[1]['alt']
+	expect(src).to eq page.find_by_id('main_image')['src']
+	expect(page.find_by_id('topic').text).to eq ("Collage for Topic " + topic)
+end
+
+
