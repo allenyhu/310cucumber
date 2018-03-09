@@ -12,3 +12,4 @@ Scenario: Single row
 Scenario: Clicking on a thumbnail
 	When I click on a thumbnail
 	Then I should see the full size original in the main collage space with collage title
+	And if there is not enough space to show the entire row then a scroll bar is to be used to allow the user to see the entire row

@@ -88,4 +88,13 @@ Then(/^I should see the full size original in the main collage space with collag
 	expect(page.find_by_id('topic').text).to eq ("Collage for Topic " + topic)
 end
 
+And(/^if there is not enough space to show the entire row then a scroll bar is to be used to allow the user to see the entire row$/) do
+	# scroll Left returns the position of the 1st matched element; returns 0 if all the way left
+	# or if element is unscrollable
+	left = page.driver.execute_script("
+		var ele  = document.getElementById('history');
+		return ele.scrollLeft;")
+	expect(left).to be > 0
+end
+
 
